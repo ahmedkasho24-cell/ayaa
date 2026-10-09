@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nitrite in Water: Reaction Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0b5cad;--deep:#0d2f5e;--mid:#3d86d6;--pale:#eef5fd;--line:#d3e2f4;--ink:#1c2b3f;--soft:#5b6b80}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{font:17px/1.65 "Source Sans 3",system-ui,sans-serif;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,serif;color:var(--deep);line-height:1.2}
+sub,sup{line-height:0}
+nav{position:sticky;top:0;z-index:9;background:#fffffff2;backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;gap:4px;align-items:center;padding:0 24px;overflow-x:auto;white-space:nowrap}
+nav b{font-family:"Source Serif 4",serif;color:var(--deep);margin-right:18px;font-size:18px}
+nav a{color:var(--soft);text-decoration:none;padding:18px 12px;font-size:15px;font-weight:500;border-bottom:2px solid transparent}
+nav a:hover,nav a:focus-visible{color:var(--blue);border-color:var(--blue);outline:none}
+header{position:relative;padding:96px 24px 120px;max-width:1100px;margin:auto}
+header h1{font-size:clamp(34px,5.4vw,58px);max-width:15em;letter-spacing:-.01em}
+header p{max-width:36em;margin-top:20px;color:var(--soft);font-size:19px}
+.wave{position:absolute;left:0;right:0;bottom:0;height:70px;width:100%}
+.wave path{animation:sway 9s ease-in-out infinite alternate}
+.wave path+path{animation-duration:13s;opacity:.55}
+@keyframes sway{to{transform:translateX(-90px)}}
+section{padding:80px 24px}
+section:nth-of-type(even){background:var(--pale)}
+.wrap{max-width:1100px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.wrap h2{font-size:32px;margin-bottom:6px}
+.tag{color:var(--blue);font-weight:600;font-size:15px;margin-bottom:10px;display:block}
+.txt p{margin:14px 0}
+h3{font-size:19px;margin:26px 0 8px}
+.eq{background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:4px;padding:12px 16px;margin:8px 0;font-family:"Source Serif 4",Georgia,serif;font-size:17px;overflow-x:auto}
+section:nth-of-type(even) .eq{background:#fff}
+.eq small{display:block;font:14px "Source Sans 3",sans-serif;color:var(--soft)}
+ul{padding-left:20px}li{margin:5px 0}
+.stage{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;position:sticky;top:84px}
+.cap{min-height:52px;font-weight:600;color:var(--deep);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.dots{display:flex;gap:6px;margin:8px 0 2px}
+.dots i{flex:1;height:4px;background:var(--line);border-radius:2px;transition:background .4s}
+.dots i.on{background:var(--blue)}
+.stage svg{width:100%;height:auto;display:block;max-height:340px}
+.res{margin-top:10px;padding:10px 14px;border-radius:4px;background:var(--pale);color:var(--deep);font-weight:600;min-height:44px;transition:background .5s}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+button{font:600 15px "Source Sans 3",sans-serif;border:1px solid var(--blue);background:#fff;color:var(--blue);padding:7px 14px;border-radius:4px;cursor:pointer}
+button:hover{background:var(--pale)}button.on,button.go{background:var(--blue);color:#fff}
+button:focus-visible{outline:3px solid #9cc4f0;outline-offset:2px}
+.clock{margin-left:auto;font:600 17px "Source Serif 4",serif;color:var(--deep);min-width:58px;text-align:right}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:16px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}th{background:var(--pale);color:var(--deep)}
+.note{font-size:15px;color:var(--soft);border-top:1px solid var(--line);margin-top:20px;padding-top:12px}
+.flow{max-width:1100px;margin:36px auto 0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px}
+.liq{transition:transform 1.3s cubic-bezier(.4,0,.2,1),fill 1.8s ease}
+footer{background:var(--deep);color:#cfe0f5;padding:36px 24px;font-size:15px}
+footer div{max-width:1100px;margin:auto}
+@media(max-width:860px){.wrap{grid-template-columns:1fr;gap:28px}.stage{position:static}section{padding:56px 20px}header{padding:64px 20px 100px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<nav><b>NO₂⁻ Lab</b><a href="#cycle">Nitrogen cycle</a><a href="#qual">Qualitative test</a><a href="#quant">Quantitative estimation</a><a href="#methb">Health effects</a><a href="#nitrate">Nitrate test</a></nav>
+
+<header>
+<h1>Detection of nitrites in water, reaction by reaction</h1>
+<p>Each section shows one reaction as a step-by-step animation, followed by the chemical equations and what the result means for water quality and health.</p>
+<svg class="wave" viewBox="0 0 1400 70" preserveAspectRatio="none" aria-hidden="true"><path d="M-100 40Q50 10 200 40T500 40T800 40T1100 40T1400 40V70H-100Z" fill="#cfe2f8"/><path d="M-100 48Q50 25 200 48T500 48T800 48T1100 48T1400 48V70H-100Z" fill="#eef5fd"/></svg>
+</header>
+
+<section id="cycle">
+<div class="wrap">
+<div class="txt">
+<span class="tag">Where nitrite comes from</span>
+<h2>Oxidation of ammonia to nitrate</h2>
+<p>Nitrite is an intermediate product of the biological oxidation of ammonia into nitrate. Natural water is free from nitrite or seldom contains more than 0.1 mg/L, so any clear presence points to recent fecal pollution.</p>
+<h3>Equations</h3>
+<div class="eq">OM → NH₃ → NO₂⁻ → NO₃⁻</div>
+<div class="eq">2 NH₄⁺ + 3 O₂ → 2 NO₂⁻ + 4 H⁺ + 2 H₂O<small>Step 1, ammonia-oxidizing bacteria (Nitrosomonas)</small></div>
+<div class="eq">2 NO₂⁻ + O₂ → 2 NO₃⁻<small>Step 2, nitrite-oxidizing bacteria (Nitrobacter)</small></div>
+<h3>Effect</h3>
+<ul><li>Nitrite present: intermediate stage, recent fecal pollution.</li><li>Nitrate present with no nitrite: old pollution, oxidation is complete.</li><li>Sources include sewage disposal systems and livestock facilities.</li></ul>
+</div>
+<div class="stage">
+<div class="cap">Ammonia is oxidized stage by stage</div>
+<svg viewBox="0 0 760 190" role="img" aria-label="Organic matter to ammonia to nitrite to nitrate">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#3d86d6"/></marker></defs>
+<g font-family="Source Sans 3,sans-serif" font-size="17" text-anchor="middle" font-weight="600">
+<rect x="10" y="50" width="150" height="62" rx="6" fill="#fff" stroke="#9fbfe6" stroke-width="2"/><text x="85" y="87" fill="#0d2f5e">Organic matter</text>
+<rect x="205" y="50" width="150" height="62" rx="6" fill="#fff" stroke="#9fbfe6" stroke-width="2"/><text x="280" y="87" fill="#0d2f5e">NH₃ / NH₄⁺</text>
+<rect x="400" y="50" width="150" height="62" rx="6" fill="#0b5cad"/><text x="475" y="87" fill="#fff">NO₂⁻</text>
+<rect x="595" y="50" width="150" height="62" rx="6" fill="#fff" stroke="#9fbfe6" stroke-width="2"/><text x="670" y="87" fill="#0d2f5e">NO₃⁻</text>
+<g fill="#5b6b80" font-size="14" font-weight="400"><text x="182" y="40">ammonification</text><text x="378" y="40">Nitrosomonas</text><text x="573" y="40">Nitrobacter</text><text x="475" y="140" fill="#0b5cad" font-weight="600">intermediate: recent pollution</text></g></g>
+<g stroke="#3d86d6" stroke-width="2.5" marker-end="url(#ar)"><path d="M162 81H200"/><path d="M357 81H395"/><path d="M552 81H590"/></g>
+<path id="trk" d="M85 170H670" stroke="#d3e2f4" stroke-width="2" stroke-dasharray="4 6" fill="none"/>
+<g fill="#3d86d6"><circle r="6"><animateMotion dur="6s" repeatCount="indefinite" path="M85 170H670"/></circle><circle r="6" opacity=".6"><animateMotion dur="6s" begin="2s" repeatCount="indefinite" path="M85 170H670"/></circle><circle r="6" opacity=".35"><animateMotion dur="6s" begin="4s" repeatCount="indefinite" path="M85 170H670"/></circle></g>
+</svg>
+</div></div>
+</section>
+
+<section id="qual">
+<div class="wrap">
+<div class="txt">
+<span class="tag">Qualitative method</span>
+<h2>Sulphanilic acid and α-naphthylamine</h2>
+<p>Nitrite is detected by a two-stage diazotization and coupling reaction (Griess reaction) in acid. The end product is a pink azo dye, so a pink color means nitrite is present.</p>
+<h3>Procedure</h3>
+<ul><li>50 mL water sample in a colorless cylinder.</li><li>Add 1 mL sulphanilic acid reagent, shake well, wait 1 to 2 minutes.</li><li>Add 1 mL α-naphthylamine in HCl and observe.</li></ul>
+<p>Reagent: 0.6 g sulphanilic acid + 70 mL hot distilled water + 20 mL conc. HCl, diluted to 100 mL.</p>
+<h3>Equations</h3>
+<div class="eq">NO₂⁻ + H⁺ ⇌ HNO₂</div>
+<div class="eq">H₂N–C₆H₄–SO₃H + HNO₂ + H⁺ → [N≡N–C₆H₄–SO₃H]⁺ + 2 H₂O<small>Diazotization of sulphanilic acid</small></div>
+<div class="eq">[N≡N–C₆H₄–SO₃H]⁺ + α-naphthylamine → pink azo dye + H⁺<small>Coupling</small></div>
+<h3>Effect</h3>
+<ul><li>Pink: positive for NO₂⁻.</li><li>No pink: negative. This does not prove the water contains exactly zero nitrite.</li></ul>
+</div>
+<div class="stage" id="s1">
+<div class="cap"></div><div class="dots"></div>
+<div id="v1"></div>
+<div class="res"></div>
+<div class="ctl"><button data-m="1" class="on">Positive sample</button><button data-m="0">Negative sample</button><button class="go">Replay</button><span class="clock">00:00</span></div>
+</div></div>
+</section>
+
+<section id="quant">
+<div class="wrap">
+<div class="txt">
+<span class="tag">Quantitative estimation</span>
+<h2>Zinc iodide starch method</h2>
+<p>In an acid medium, nitrite oxidizes iodide to iodine. Iodine forms a blue complex with starch. The faster the blue color appears, the more nitrite the sample holds.</p>
+<h3>Procedure</h3>
+<ul><li>10 mL sample in a test tube.</li><li>Add 3 to 5 drops of conc. H₂SO₄.</li><li>Add 0.5 mL zinc iodide starch solution and start the stopwatch.</li></ul>
+<h3>Equations</h3>
+<div class="eq">2 NO₂⁻ + 2 I⁻ + 4 H⁺ → I₂ + 2 NO + 2 H₂O</div>
+<div class="eq">I₂ + I⁻ ⇌ I₃⁻</div>
+<div class="eq">I₃⁻ + starch → blue starch–iodine complex</div>
+<h3>Calibration</h3>
+<table><tr><th>Blue color appears</th><th>Nitrite</th></tr><tr><td>Immediately</td><td>0.50 mg/L</td></tr><tr><td>After 30 seconds</td><td>0.30 mg/L</td></tr><tr><td>After 1 minute</td><td>0.15 mg/L</td></tr><tr><td>After 3 minutes</td><td>0.10 mg/L</td></tr><tr><td>After 10 minutes</td><td>0.05 mg/L</td></tr></table>
+<p class="note">Values are taken from the course handout. Timing-based estimates depend on fixed conditions, so confirm them with the instructor before formal use.</p>
+</div>
+<div class="stage" id="s2">
+<div class="cap"></div><div class="dots"></div>
+<div id="v2"></div>
+<div class="res"></div>
+<div class="ctl"><button data-t="0" data-c="0.50">Immediately</button><button data-t="30" data-c="0.30">30 s</button><button data-t="60" data-c="0.15" class="on">1 min</button><button data-t="180" data-c="0.10">3 min</button><button data-t="600" data-c="0.05">10 min</button><span class="clock">00:00</span></div>
+</div></div>
+</section>
+
+<section id="methb">
+<div class="wrap">
+<div class="txt">
+<span class="tag">Hygienic significance</span>
+<h2>Methemoglobin formation</h2>
+<p>Nitrite oxidizes the iron in hemoglobin from Fe²⁺ to Fe³⁺. The resulting methemoglobin cannot carry oxygen, so tissues are starved of it.</p>
+<h3>Equation</h3>
+<div class="eq">Hb (Fe²⁺) + NO₂⁻ → MetHb (Fe³⁺)<small>Simplified scheme</small></div>
+<h3>Effect</h3>
+<ul><li>Fish: brown blood disease. High nitrite with low chloride lowers feed conversion and disease resistance. Calcium, chloride and bicarbonate reduce nitrite toxicity.</li><li>Humans: blue baby syndrome. Blood loses its ability to carry oxygen, skin and veins look blue.</li><li>Severe cases lead to digestive and respiratory problems, anoxia, brain damage or death.</li><li>Adults have enough enzymes to convert methemoglobin back to hemoglobin. Newborns have lower levels and are more susceptible.</li></ul>
+</div>
+<div class="stage" id="s3">
+<div class="cap">Hemoglobin carries oxygen</div>
+<svg viewBox="0 0 420 250" role="img" aria-label="Red blood cell reacting with nitrite">
+<g id="ions" font-family="Source Serif 4,serif" font-size="18" fill="#0b5cad" font-weight="600" style="transition:transform 1.6s ease,opacity 1.6s;transform:translateX(-90px);opacity:0"><text x="20" y="70">NO₂⁻</text><text x="10" y="130">NO₂⁻</text><text x="30" y="190">NO₂⁻</text></g>
+<circle id="cell" cx="230" cy="125" r="82" fill="#d9444d" style="transition:fill 2s ease"/>
+<ellipse cx="230" cy="125" rx="40" ry="34" fill="#000" opacity=".12"/>
+<g id="o2" fill="#fff" font-family="Source Sans 3,sans-serif" font-size="13" font-weight="600" text-anchor="middle" style="transition:opacity 1.2s,transform 1.8s">
+<g><circle cx="190" cy="85" r="14"/><text x="190" y="90" fill="#d9444d">O₂</text></g><g><circle cx="272" cy="90" r="14"/><text x="272" y="95" fill="#d9444d">O₂</text></g><g><circle cx="276" cy="165" r="14"/><text x="276" y="170" fill="#d9444d">O₂</text></g><g><circle cx="186" cy="165" r="14"/><text x="186" y="170" fill="#d9444d">O₂</text></g></g>
+<text id="lab" x="230" y="236" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="16" font-weight="600" fill="#0d2f5e">Hb (Fe²⁺)</text>
+</svg>
+<div class="res">Normal hemoglobin, oxygen bound.</div>
+<div class="ctl"><button class="go">Add nitrite</button><button>Reset</button></div>
+</div></div>
+</section>
+
+<section id="nitrate">
+<div class="wrap">
+<div class="txt">
+<span class="tag">Related test for nitrate</span>
+<h2>Diphenylamine test</h2>
+<p>Nitrate is colorless and odorless, so it cannot be noticed without a test. Diphenylamine in strong acid is oxidized by nitrate to a blue product.</p>
+<h3>Procedure</h3>
+<ul><li>In a porcelain dish or Petri dish, place 2 mL diphenylamine reagent.</li><li>Add a few drops of the water sample.</li></ul>
+<h3>Equation</h3>
+<div class="eq">NO₃⁻ + diphenylamine (conc. H₂SO₄) → blue oxidation product<small>Simplified scheme</small></div>
+<h3>Effect</h3>
+<ul><li>Blue lines or blue rays: positive for nitrate. Light blue corresponds to about 20 to 30 ppm.</li><li>Risk groups: infants, pregnant women, nursing mothers and elderly people.</li><li>Ruminants are more susceptible, since rumen bacteria convert nitrate to nitrite.</li></ul>
+</div>
+<div class="stage" id="s4">
+<div class="cap"></div><div class="dots"></div>
+<svg viewBox="0 0 420 250" role="img" aria-label="Petri dish with blue rays">
+<ellipse cx="210" cy="140" rx="180" ry="82" fill="#fff" stroke="#9fbfe6" stroke-width="3"/>
+<ellipse id="film" cx="210" cy="140" rx="168" ry="72" fill="#dbe9f9" style="opacity:0;transition:opacity 1.5s"/>
+<g id="rays" stroke="#1d5fc2" stroke-width="3.5" stroke-linecap="round" fill="none"></g>
+<circle id="d4" cx="210" cy="30" r="6" fill="#7fb0ea" opacity="0"/>
+</svg>
+<div class="res"></div>
+<div class="ctl"><button class="go">Replay</button></div>
+</div></div>
+</section>
+
+<footer><div>Safety: concentrated HCl and H₂SO₄ are corrosive and α-naphthylamine needs proper handling. These animations are simulations. Real laboratory work must follow the approved institutional procedure with protective equipment.</div></footer>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],sleep=t=>new Promise(r=>setTimeout(r,t));
+const CLEAR='#bcd6f2',NS='http://www.w3.org/2000/svg';
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');
+
+function vessel(host,wide){
+ const a=wide?50:75,b=wide?150:125,id='c'+Math.random().toString(36).slice(2,6);
+ host.innerHTML=`<svg viewBox="0 0 200 280"><defs><clipPath id="${id}"><path d="M${a+2} 60V236Q${a+2} 248 ${a+14} 248H${b-14}Q${b-2} 248 ${b-2} 236V60Z"/></clipPath></defs>
+ <rect class="liq" x="${a}" y="48" width="${b-a}" height="200" clip-path="url(#${id})" style="fill:${CLEAR};opacity:0;transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)"/>
+ <path d="M${a} 44V236Q${a} 250 ${a+14} 250H${b-14}Q${b} 250 ${b} 236V44" fill="none" stroke="#7aa3d4" stroke-width="3" stroke-linecap="round"/>
+ <path d="M${a-6} 44H${a}M${b} 44H${b+6}" stroke="#7aa3d4" stroke-width="3" stroke-linecap="round"/>
+ <g stroke="#9fbfe6" stroke-width="2">${[0,1,2,3].map(i=>`<path d="M${a+3} ${100+i*35}h12"/>`).join('')}</g>
+ <g class="pip"><path d="M100 2V30L96 40H104L100 30" fill="#fff" stroke="#0d2f5e" stroke-width="3" stroke-linejoin="round"/><rect x="92" y="-2" width="16" height="10" rx="4" fill="#0d2f5e"/></g>
+ <circle class="drop" cx="100" cy="46" r="5" opacity="0"/></svg>`;
+ return {svg:$('svg',host),liq:$('.liq',host),drop:$('.drop',host)};
+}
+function setLiq(v,l,c,op=1){v.liq.style.opacity=op;v.liq.style.transform=`scaleY(${l})`;if(c)v.liq.style.fill=c}
+async function dropIn(v,c,surface){
+ v.drop.setAttribute('fill',c);
+ await v.drop.animate([{transform:'translateY(0)',opacity:1},{transform:`translateY(${surface}px)`,opacity:1,offset:.85},{transform:`translateY(${surface}px)`,opacity:0}],{duration:900,easing:'ease-in'}).finished;
+}
+function shake(v){return v.svg.animate([{transform:'rotate(0)'},{transform:'rotate(-5deg)'},{transform:'rotate(5deg)'},{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'},{transform:'rotate(0)'}],{duration:1200,easing:'ease-in-out'}).finished}
+function count(el,from,to,ms){return new Promise(r=>{const t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/ms);el.textContent=fmt(from+(to-from)*k);k<1?requestAnimationFrame(f):r()})(t0)})}
+
+/* generic runner */
+function runner(stage,steps){
+ const cap=$('.cap',stage),dots=$('.dots',stage);let id=0;
+ dots.innerHTML=steps.map(()=>'<i></i>').join('');
+ return async(ctx)=>{const me=++id;
+  $$('i',dots).forEach(d=>d.classList.remove('on'));
+  for(let i=0;i<steps.length;i++){
+   if(me!==id)return;
+   cap.textContent=steps[i].c;$$('i',dots)[i].classList.add('on');
+   await steps[i].f(ctx,()=>me!==id);
+  }};
+}
+function onView(el,fn){new IntersectionObserver((e,o)=>{if(e[0].isIntersecting){fn();o.disconnect()}},{threshold:.45}).observe(el)}
+
+/* Part 1 */
+(()=>{
+ const st=$('#s1'),v=vessel($('#v1'),true),res=$('.res',st),clk=$('.clock',st);let pos=1;
+ const run=runner(st,[
+  {c:'Step 1: add 50 mL of water sample',f:async()=>{res.textContent='';clk.textContent='00:00';setLiq(v,0,CLEAR,0);await sleep(100);setLiq(v,.5,CLEAR,.55);await sleep(1800)}},
+  {c:'Step 2: add 1 mL sulphanilic acid reagent',f:async()=>{await dropIn(v,'#8fb3e0',120);setLiq(v,.52,CLEAR,.55);await sleep(900);res.textContent='Solution remains clear.'}},
+  {c:'Step 3: shake well to mix',f:async()=>{await shake(v);await sleep(300)}},
+  {c:'Step 4: wait 1 to 2 minutes (time lapse)',f:async()=>{await count(clk,0,90,2400);res.textContent='No pink color yet.'}},
+  {c:'Step 5: add 1 mL α-naphthylamine in HCl',f:async()=>{await dropIn(v,'#8a77ad',112);setLiq(v,.54,CLEAR,.55);await sleep(500);await shake(v)}},
+  {c:'Step 6: observe the color',f:async()=>{setLiq(v,.54,pos?'#f0559a':CLEAR,pos?.8:.55);await sleep(2200);res.textContent=pos?'Positive: pink color, nitrite detected.':'Negative: no characteristic pink color.'}}
+ ]);
+ $$('button[data-m]',st).forEach(b=>b.onclick=()=>{pos=+b.dataset.m;$$('button[data-m]',st).forEach(x=>x.classList.toggle('on',x===b));run()});
+ $('.go',st).onclick=run;onView(st,run);
+})();
+
+/* Part 2 */
+(()=>{
+ const st=$('#s2'),v=vessel($('#v2'),false),res=$('.res',st),clk=$('.clock',st);let t=60,c='0.15';
+ const blues={0:['#1c4fb0',.95],30:['#2f6fcb',.85],60:['#4c8be0',.72],180:['#79a9e8',.6],600:['#a8c8f0',.5]};
+ const run=runner(st,[
+  {c:'Step 1: add 10 mL of water sample',f:async()=>{res.textContent='';clk.textContent='00:00';setLiq(v,0,CLEAR,0);await sleep(100);setLiq(v,.4,CLEAR,.55);await sleep(1600)}},
+  {c:'Step 2: add 3 to 5 drops of conc. H₂SO₄',f:async()=>{await dropIn(v,'#9db4d3',110);await sleep(500);for(let i=0;i<2;i++)await dropIn(v,'#9db4d3',110)}},
+  {c:'Step 3: add 0.5 mL zinc iodide starch solution',f:async()=>{await dropIn(v,'#e4d7b4',108);setLiq(v,.44,CLEAR,.55);await shake(v)}},
+  {c:'Step 4: start the stopwatch and watch for blue',f:async(_,stop)=>{if(t)await count(clk,0,t,2600);const [col,op]=blues[t];setLiq(v,.44,col,op);await sleep(1500)}},
+  {c:'Step 5: match the time with the table',f:async()=>{res.textContent=`Blue after ${t?fmt(t):'0 s'}: estimated nitrite ≈ ${c} mg/L`;await sleep(300)}}
+ ]);
+ $$('button[data-t]',st).forEach(b=>b.onclick=()=>{t=+b.dataset.t;c=b.dataset.c;$$('button[data-t]',st).forEach(x=>x.classList.toggle('on',x===b));run()});
+ onView(st,run);
+})();
+
+/* Methemoglobin */
+(()=>{
+ const st=$('#s3'),cell=$('#cell'),o2=$('#o2'),ions=$('#ions'),lab=$('#lab'),res=$('.res',st),cap=$('.cap',st),[go,rs]=$$('button',st);
+ const reset=()=>{cell.style.fill='#d9444d';o2.style.opacity=1;o2.style.transform='none';ions.style.opacity=0;ions.style.transform='translateX(-90px)';lab.textContent='Hb (Fe²⁺)';res.textContent='Normal hemoglobin, oxygen bound.';cap.textContent='Hemoglobin carries oxygen'};
+ go.onclick=async()=>{reset();await sleep(60);cap.textContent='Nitrite oxidizes Fe²⁺ to Fe³⁺';ions.style.opacity=1;ions.style.transform='translateX(70px)';await sleep(1400);ions.style.opacity=0;cell.style.fill='#7b4a2c';o2.style.opacity=0;o2.style.transform='translateX(60px)';lab.textContent='MetHb (Fe³⁺)';res.textContent='Methemoglobin cannot carry oxygen: brown blood disease in fish, blue baby syndrome in infants.'};
+ rs.onclick=reset;onView(st,()=>go.onclick());
+})();
+
+/* Nitrate */
+(()=>{
+ const st=$('#s4'),g=$('#rays'),film=$('#film'),d=$('#d4'),res=$('.res',st);
+ const L=[];for(let i=0;i<9;i++){const a=(i/9)*Math.PI*2+.3,r=95+(i%3)*18,p=document.createElementNS(NS,'path');
+  p.setAttribute('d',`M210 140Q${210+Math.cos(a+.4)*r*.5} ${140+Math.sin(a+.4)*r*.3} ${210+Math.cos(a)*r*1.5} ${140+Math.sin(a)*r*.7}`);
+  p.style.cssText='stroke-dasharray:300;stroke-dashoffset:300;opacity:.75';g.append(p);L.push(p)}
+ const run=runner(st,[
+  {c:'Step 1: place 2 mL diphenylamine reagent in the dish',f:async()=>{res.textContent='';L.forEach(p=>{p.style.transition='none';p.style.strokeDashoffset=300});film.style.opacity=0;await sleep(100);film.style.opacity=1;await sleep(1700)}},
+  {c:'Step 2: add a few drops of the water sample',f:async()=>{for(let i=0;i<3;i++){d.setAttribute('cy',30);await d.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(105px)',opacity:1,offset:.8},{transform:'translateY(105px)',opacity:0}],{duration:700,easing:'ease-in'}).finished}}},
+  {c:'Step 3: observe blue rays spreading',f:async()=>{L.forEach((p,i)=>{p.style.transition=`stroke-dashoffset 2.2s ${i*.12}s ease-out`;p.style.strokeDashoffset=0});await sleep(3600);res.textContent='Positive: blue lines or blue rays, nitrate present.'}}
+ ]);
+ $('.go',st).onclick=run;onView(st,run);
+})();
+</script>
+</body>
+</html>
